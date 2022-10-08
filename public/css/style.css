@@ -1,0 +1,12 @@
+h1 {
+    text-align: center;
+    background-color: #dddddd;
+    width: 500px;
+    margin:auto;
+    padding:5px;
+}
+.res {
+    border-style: dashed;
+    width: fit-content;
+    margin: auto;
+}
