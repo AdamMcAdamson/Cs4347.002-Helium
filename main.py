@@ -1,9 +1,8 @@
-from flask import Flask, request, current_app
+from flask import Flask, request
 from flask_restful import Resource, Api
 import sqlite3 as sql
 
-app = Flask(__name__, static_folder='public',
-                      static_url_path='/public' )
+app = Flask(__name__)
 api = Api(app)
 
 
