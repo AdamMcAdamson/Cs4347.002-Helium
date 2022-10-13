@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_restful import Resource, Api
 import sqlite3 as sql
 
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__, static_url_path='/')
 api = Api(app)
 
 
@@ -16,7 +16,7 @@ class Quote(Resource):
         with sql.connect('HeliumDB.db') as conn:
             conn.row_factory = sql.Row
             c = conn.cursor()
-            return dict(c.execute('SELECT * FROM quote WHERE id = ?', args['id']).fetchone())
+            return [dict(x) for x in (c.execute('SELECT * FROM quote').fetchall())]
 
 
 api.add_resource(Quote, '/quote', endpoint='quote')

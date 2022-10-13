@@ -2,10 +2,10 @@ function getQuotes(){
     var res_loc = document.getElementById('res');
     var list = document.getElementById('res-list');
 
-    fetch("quotes").then(response => {
+    fetch("quote").then(response => {
         return response.json();
     }).then(res => {
-        var data = res.data
+        var data = res
         
         // clear list
         while (list.firstChild) {
