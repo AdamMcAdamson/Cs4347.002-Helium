@@ -14,7 +14,9 @@ class Quote(Resource):
     def get(self):
         args = request.args
         with sql.connect('HeliumDB.db') as conn:
-            return conn.execute('SELECT * FROM quote WHERE id = ?', args['id']).fetchall()
+            conn.row_factory = sql.Row
+            c = conn.cursor()
+            return dict(c.execute('SELECT * FROM quote WHERE id = ?', args['id']).fetchone())
 
 
 api.add_resource(Quote, '/quote', endpoint='quote')
