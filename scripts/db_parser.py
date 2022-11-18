@@ -41,7 +41,7 @@ with open('./resources/books.csv', mode = 'r', encoding='utf-8') as file:
 
         # @TODO: Add Book Cover_url
 
-        books.append([line["ISBN10"], line["Title"]])
+        books.append([line["ISBN10"], line["Title"], "https://images.isbndb.com/covers/" + line["ISBN13"][9:11] + "/" + line["ISBN13"][11:] + "/" + line["ISBN13"] + ".jpg"])
         
         for j in line["Author"].split(','):
             if j in authors:
@@ -73,6 +73,7 @@ with open('./resources/schema.sql', mode = 'w+', encoding='utf-8') as file:
     CREATE TABLE BOOK (
         Isbn CHAR(10) NOT NULL,
         Title VARCHAR NOT NULL,
+        Cover_url VARCHAR NOT NULL,
         PRIMARY KEY (Isbn) 
     );
 
@@ -105,7 +106,7 @@ with open('./resources/schema.sql', mode = 'w+', encoding='utf-8') as file:
     # Populate BOOK Table
     file.write("\n\tINSERT INTO BOOK (Isbn, Title)")
     for book in books:
-        file.write("\n\tVALUES ('" + book[0] + "', '" + book[1] + "')")
+        file.write("\n\tVALUES ('" + book[0] + "', '" + book[1] + "', '" + book[2] + "')")
     file.write(";\n")
 
     # Populate AUTHORS Table
