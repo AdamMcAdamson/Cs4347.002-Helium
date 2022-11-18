@@ -39,8 +39,6 @@ with open('./resources/books.csv', mode = 'r', encoding='utf-8') as file:
         line["Publisher"] = line["Publisher"].replace("&gt;", ">")
         line["Publisher"] = line["Publisher"].replace("&lt;", "<")
 
-        # @TODO: Add Book Cover_url
-
         books.append([line["ISBN10"], line["Title"], "https://images.isbndb.com/covers/" + line["ISBN13"][9:11] + "/" + line["ISBN13"][11:] + "/" + line["ISBN13"] + ".jpg"])
         
         for j in line["Author"].split(','):
@@ -68,7 +66,6 @@ with open('./resources/borrowers.csv', mode = 'r', encoding='utf-8') as file:
 # Write Schema File
 with open('./resources/schema.sql', mode = 'w+', encoding='utf-8') as file:
 
-    # @TODO: Add Book Cover_url Attribute
     header = '''
     CREATE TABLE BOOK (
         Isbn CHAR(10) NOT NULL,
