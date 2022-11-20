@@ -41,7 +41,7 @@ def create_borrower():
 app.add_url_rule('/borrower/create', 'create_borrower', create_borrower, methods=["POST"])
 
 
-api.add_resource(Search, '/search', endpoint='search')
+api.add_resource(Search, '/book/search', endpoint='search')
 
 
 if __name__ == '__main__':
