@@ -1,7 +1,6 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
 import sqlite3 as sql
-import traceback, sys
 
 import consts
 from search import Search
@@ -15,7 +14,7 @@ def index():
 app.add_url_rule('/', 'index', index)
 
 
-#TODO: refactor as a Resource put method
+#TODO: refactor as a Borrower Resource with a .put method 
 def create_borrower():
     args = request.args
 
