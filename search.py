@@ -1,7 +1,8 @@
 import sqlite3 as sql
+from flask import request
 from flask_restful import Resource
 
-import consts
+from consts import DB_FILE, SEARCH_PAGE_SIZE
 
 #TODO: Book availability
 class Search(Resource):

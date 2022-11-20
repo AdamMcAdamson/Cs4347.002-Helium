@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_restful import Resource, Api
 import sqlite3 as sql
 
-import consts
+from consts import DB_FILE
 from search import Search
 
 app = Flask(__name__, static_url_path='/')
