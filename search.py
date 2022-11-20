@@ -1,3 +1,8 @@
+import sqlite3 as sql
+from flask_restful import Resource
+
+import consts
+
 #TODO: Book availability
 class Search(Resource):
 
