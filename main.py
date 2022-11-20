@@ -1,7 +1,9 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
 from flask_restful import Resource, Api
 import sqlite3 as sql
-import traceback, sys
+
+from consts import DB_FILE
+from search import Search
 
 app = Flask(__name__, static_url_path='/')
 api = Api(app)
@@ -11,20 +13,8 @@ def index():
 
 app.add_url_rule('/', 'index', index)
 
-with sql.connect('HeliumDB.db') as conn:
-    file = open('./resources/schema.sql', mode = 'r', encoding='utf-8')
-    c = conn.cursor()
-    c.executescript(file.read())
 
-class Quote(Resource):
-    def get(self):
-        args = request.args
-        with sql.connect('HeliumDB.db') as conn:
-            conn.row_factory = sql.Row
-            c = conn.cursor()
-            #return jsonify({"message": 200, "success":True, "data": [dict(x) for x in (c.execute('SELECT * FROM quote').fetchall())]})
-            return [dict(x) for x in (c.execute('SELECT * FROM quote').fetchall())]
-
+#TODO: refactor as a Borrower Resource with a .put method 
 def create_borrower():
     args = request.args
 
@@ -35,7 +25,7 @@ def create_borrower():
 
     stuff = "SSN: " + ssn + "\tBNAME: " + bname + "\tADDRESS: " + address + "\tPHONE: " + phone
     return stuff,203
-    with sql.connect('HeliumDB.db') as conn:
+    with sql.connect(DB_FILE) as conn:
         conn.row_factory = sql.Row
         c = conn.cursor()
         # @TODO: Check for existing SSN and return useful error if it already exists
@@ -48,10 +38,17 @@ def create_borrower():
         # return [dict(x) for x in (c.execute('SELECT * FROM quote').fetchall())]
         return app.make_response(200)
 
-
-api.add_resource(Quote, '/quote', endpoint='quote')
-
 app.add_url_rule('/borrower/create', 'create_borrower', create_borrower, methods=["POST"])
 
+
+api.add_resource(Search, '/book/search', endpoint='search')
+
+
 if __name__ == '__main__':
+
+    with sql.connect(DB_FILE) as conn:
+        file = open('./resources/schema.sql', mode = 'r', encoding='utf-8')
+        c = conn.cursor()
+        c.executescript(file.read())
+
     app.run(debug=True)

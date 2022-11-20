@@ -1,0 +1,2 @@
+DB_FILE = 'HeliumDB.db'
+SEARCH_PAGE_SIZE = 20
