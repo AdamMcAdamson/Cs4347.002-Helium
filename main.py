@@ -33,20 +33,23 @@ def create_borrower():
     address = args.get("address")
     phone = args.get("phone", "NULL")
 
-    stuff = "SSN: " + ssn + "\tBNAME: " + bname + "\tADDRESS: " + address + "\tPHONE: " + phone
-    return stuff,203
+    # @TODO: Check for NULL values and return error if so
+    # @TODO: Sanitize ssn and phone number into proper form:
+    #   ssn - 123-456-7890
+    #   phone - (555) 555-5555
     with sql.connect('HeliumDB.db') as conn:
         conn.row_factory = sql.Row
         c = conn.cursor()
-        # @TODO: Check for existing SSN and return useful error if it already exists
-        # command = "INSERT INTO BORROWER (Ssn, Bname, Address, Phone) VALUES VALUES (?, ?, ?, ?);",
-        # c.execute(
-        #     command,
-        #     (ssn, bname, address, phone)
-        # )
-        # + borrower[0] + "', '" + borrower[1] + "', '" + borrower[2]+ "', '" + borrower[3] + "')"        
-        # return [dict(x) for x in (c.execute('SELECT * FROM quote').fetchall())]
-        return app.make_response(200)
+        # Check for existing SSN and return useful error if it already exists
+        if c.execute('SELECT * FROM BORROWER WHERE Ssn = ?', (ssn,)).fetchone():
+            return "Only one borrower card per person. Ssn must be unique.",409
+        # Create borrower
+        command = "INSERT INTO BORROWER (Ssn, Bname, Address, Phone) VALUESS (?, ?, ?, ?);",
+        c.execute(
+            command,
+            (ssn, bname, address, phone)
+        )
+        return "Success",200
 
 
 api.add_resource(Quote, '/quote', endpoint='quote')
