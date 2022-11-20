@@ -29,17 +29,13 @@ class Quote(Resource):
             #return jsonify({"message": 200, "success":True, "data": [dict(x) for x in (c.execute('SELECT * FROM quote').fetchall())]})
             return [dict(x) for x in (c.execute('SELECT * FROM quote').fetchall())]
 
-
+#TODO: Book availability
 class Search(Resource):
 
     def get(self):
         args = {'q':request.args.get('q', '').lower()}
 
         with sql.connect(DB_FILE) as conn:
-            #ISBN
-            #Book title
-            #Book author(s)
-            #Book availability (is the book currently checked out?)
             conn.row_factory = sql.Row
             c = conn.cursor()
 
