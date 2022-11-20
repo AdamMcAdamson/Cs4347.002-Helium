@@ -45,8 +45,10 @@ api.add_resource(Search, '/search', endpoint='search')
 
 
 if __name__ == '__main__':
+
     with sql.connect(DB_FILE) as conn:
         file = open('./resources/schema.sql', mode = 'r', encoding='utf-8')
         c = conn.cursor()
         c.executescript(file.read())
+
     app.run(debug=True)
