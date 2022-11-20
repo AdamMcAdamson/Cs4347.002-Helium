@@ -4,6 +4,7 @@ import sqlite3 as sql
 import traceback, sys
 
 DB_FILE = 'HeliumDB.db'
+SEARCH_PAGE_SIZE = 20
 
 app = Flask(__name__, static_url_path='/')
 api = Api(app)
@@ -18,6 +19,7 @@ with sql.connect(DB_FILE) as conn:
     c = conn.cursor()
     c.executescript(file.read())
 
+
 class Quote(Resource):
     def get(self):
         args = request.args
@@ -26,6 +28,38 @@ class Quote(Resource):
             c = conn.cursor()
             #return jsonify({"message": 200, "success":True, "data": [dict(x) for x in (c.execute('SELECT * FROM quote').fetchall())]})
             return [dict(x) for x in (c.execute('SELECT * FROM quote').fetchall())]
+
+
+class Search(Resource):
+
+    def get(self):
+        args = {'q':request.args.get('q', '').lower()}
+
+        with sql.connect(DB_FILE) as conn:
+            #ISBN
+            #Book title
+            #Book author(s)
+            #Book availability (is the book currently checked out?)
+            conn.row_factory = sql.Row
+            c = conn.cursor()
+
+            sql_query = '''
+            WITH q_authors AS (
+                SELECT GROUP_CONCAT(Name,', ') AS Author_names, Isbn
+                FROM AUTHORS NATURAL JOIN BOOK_AUTHORS
+                GROUP BY Isbn
+            )
+            SELECT Isbn, Title, Author_names, Cover_url
+            FROM BOOK NATURAL JOIN q_authors
+            WHERE INSTR(LOWER(Title), :q) > 0
+            OR INSTR(LOWER(Author_names), :q) > 0
+            OR INSTR(LOWER(Isbn), :q) > 0
+            ORDER BY INSTR(LOWER(Isbn), :q), INSTR(LOWER(Author_names), :q), INSTR(LOWER(Title), :q)
+            ;
+            '''
+
+            return [dict(x) for x in c.execute(sql_query, args).fetchmany(size=SEARCH_PAGE_SIZE)]
+
 
 def create_borrower():
     args = request.args
@@ -52,6 +86,7 @@ def create_borrower():
 
 
 api.add_resource(Quote, '/quote', endpoint='quote')
+api.add_resource(Search, '/search', endpoint='search')
 
 app.add_url_rule('/borrower/create', 'create_borrower', create_borrower, methods=["POST"])
 
