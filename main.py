@@ -34,10 +34,10 @@ def create_borrower():
         if c.execute('SELECT * FROM BORROWER WHERE Ssn = ?', (ssn,)).fetchone():
             return "Only one borrower card per person. Ssn must be unique.",409
         # Create borrower
-        command = "INSERT INTO BORROWER (Ssn, Bname, Address, Phone) VALUESS (?, ?, ?, ?);",
+        command = "INSERT INTO BORROWER (Ssn, Bname, Address, Phone) VALUES (?, ?, ?, ?);"
         c.execute(
             command,
-            (ssn, bname, address, phone)
+            (ssn, bname, address, phone,)
         )
         return "Success",200
 
