@@ -3,6 +3,8 @@ from flask_restful import Resource, Api
 import sqlite3 as sql
 import traceback, sys
 
+DB_FILE = 'HeliumDB.db'
+
 app = Flask(__name__, static_url_path='/')
 api = Api(app)
 
@@ -11,7 +13,7 @@ def index():
 
 app.add_url_rule('/', 'index', index)
 
-with sql.connect('HeliumDB.db') as conn:
+with sql.connect(DB_FILE) as conn:
     file = open('./resources/schema.sql', mode = 'r', encoding='utf-8')
     c = conn.cursor()
     c.executescript(file.read())
@@ -19,7 +21,7 @@ with sql.connect('HeliumDB.db') as conn:
 class Quote(Resource):
     def get(self):
         args = request.args
-        with sql.connect('HeliumDB.db') as conn:
+        with sql.connect(DB_FILE) as conn:
             conn.row_factory = sql.Row
             c = conn.cursor()
             #return jsonify({"message": 200, "success":True, "data": [dict(x) for x in (c.execute('SELECT * FROM quote').fetchall())]})
@@ -35,7 +37,7 @@ def create_borrower():
 
     stuff = "SSN: " + ssn + "\tBNAME: " + bname + "\tADDRESS: " + address + "\tPHONE: " + phone
     return stuff,203
-    with sql.connect('HeliumDB.db') as conn:
+    with sql.connect(DB_FILE) as conn:
         conn.row_factory = sql.Row
         c = conn.cursor()
         # @TODO: Check for existing SSN and return useful error if it already exists
