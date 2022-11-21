@@ -11,10 +11,9 @@ app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 # Register the blueprints 
 app.register_blueprint(views_blueprint, url_prefix='/views')
 
+@app.route('/', methods=['GET'])
 def index(): 
     return app.send_static_file('index.html')
-
-app.add_url_rule('/', 'index', index)
 
 with sql.connect('HeliumDB.db') as conn:
     file = open('./resources/schema.sql', mode = 'r', encoding='utf-8')
