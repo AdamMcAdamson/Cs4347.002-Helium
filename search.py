@@ -8,7 +8,7 @@ from consts import DB_FILE, SEARCH_PAGE_SIZE
 class Search(Resource):
 
     def get(self):
-        args = {'q':request.args.get('q', '').lower()}
+        args = {'q':request.args.get('q', '').lower(), 'p':request.args.get('p', ''), 's':SEARCH_PAGE_SIZE('s', '')}
 
         with sql.connect(DB_FILE) as conn:
             conn.row_factory = sql.Row
@@ -26,6 +26,7 @@ class Search(Resource):
             OR INSTR(LOWER(Author_names), :q) > 0
             OR INSTR(LOWER(Isbn), :q) > 0
             ORDER BY INSTR(LOWER(Isbn), :q), INSTR(LOWER(Author_names), :q), INSTR(LOWER(Title), :q)
+            LIMIT :s OFFSET (:p-1)*:s
             ;
             '''
 
