@@ -7,13 +7,14 @@ import sqlite3 as sql
 from consts import DB_FILE
 from search import Search
 
-app = Flask(__name__)
+app = Flask(__name__) 
 api = Api(app)
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 
 # Register the blueprints 
 app.register_blueprint(views_blueprint, url_prefix='/views')
 
+# Serve Static Files
 @app.route('/', methods=['GET'])
 def index(): 
     return app.send_static_file('index.html')
@@ -38,7 +39,7 @@ class Quote(Resource):
 @app.route('/borrower/create', methods=['GET', 'POST'])
 def create_borrower():
     form = NewBorrowerForm()
-    #args = request.args
+    
     if form.validate_on_submit():
         ssn = request.form["ssn"]
         bname = request.form["name"]
