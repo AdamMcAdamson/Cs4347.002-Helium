@@ -1,10 +1,14 @@
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
+from views import views_blueprint
 import sqlite3 as sql
 import traceback, sys
 
 app = Flask(__name__, static_url_path='/')
 api = Api(app)
+app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
+# Register the blueprints 
+app.register_blueprint(views_blueprint, url_prefix='/views')
 
 def index(): 
     return app.send_static_file('index.html')
@@ -50,6 +54,9 @@ def create_borrower():
             (ssn, bname, address, phone,)
         )
         return "Success",200
+
+
+
 
 
 api.add_resource(Quote, '/quote', endpoint='quote')
