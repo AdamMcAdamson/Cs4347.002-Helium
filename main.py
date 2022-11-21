@@ -37,7 +37,7 @@ def create_borrower():
         address = request.form["address"]
         phone = request.form["phone"]
 
-        with sql.connect('HeliumDB.db') as conn:
+        with sql.connect(DB_FILE) as conn:
             conn.row_factory = sql.Row
             c = conn.cursor()
             # Check for existing SSN and return useful error if it already exists
