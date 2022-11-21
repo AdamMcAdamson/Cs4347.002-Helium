@@ -18,11 +18,6 @@ app.register_blueprint(views_blueprint, url_prefix='/views')
 def index(): 
     return app.send_static_file('index.html')
 
-with sql.connect('HeliumDB.db') as conn:
-    file = open('./resources/schema.sql', mode = 'r', encoding='utf-8')
-    c = conn.cursor()
-    c.executescript(file.read())
-
 class Quote(Resource):
     def get(self):
         args = request.args
@@ -60,6 +55,8 @@ def create_borrower():
     return render_template('new_borrower.html', form=form, title='Create New Borrower')
 
 api.add_resource(Quote, '/quote', endpoint='quote')
+
+api.add_resource(Search, '/book/search', endpoint='search')
 
 if __name__ == '__main__':
 
