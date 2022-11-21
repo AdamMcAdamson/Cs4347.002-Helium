@@ -18,10 +18,18 @@ app.register_blueprint(views_blueprint, url_prefix='/views')
 def index(): 
     return app.send_static_file('index.html')
 
+@app.route('/css/style.css', methods=['GET'])
+def style(): 
+    return app.send_static_file('./css/style.css')
+
+@app.route('/scripts/api_calls.js', methods=['GET'])
+def api_calls(): 
+    return app.send_static_file('./scripts/api_calls.js')
+
 class Quote(Resource):
     def get(self):
         args = request.args
-        with sql.connect('HeliumDB.db') as conn:
+        with sql.connect(DB_FILE) as conn:
             conn.row_factory = sql.Row
             c = conn.cursor()
             #return jsonify({"message": 200, "success":True, "data": [dict(x) for x in (c.execute('SELECT * FROM quote').fetchall())]})
