@@ -26,6 +26,7 @@ function getQuotes(){
     });
 }
 
-var button = document.getElementById("res-btn");
-
-button.addEventListener("click", getQuotes);
+window.addEventListener("load", () => {
+    var button = document.getElementById("res-btn");
+    button.addEventListener("click", getQuotes);
+})

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, flash, redirect
+from flask import Flask, request, jsonify, render_template, flash, redirect, send_file, send_from_directory
 from flask_restful import Resource, Api
 from forms import NewBorrowerForm
 from views import views_blueprint
@@ -17,15 +17,15 @@ app.register_blueprint(views_blueprint, url_prefix='/views')
 # Serve Static Files
 @app.route('/', methods=['GET'])
 def index(): 
-    return app.send_static_file('index.html')
+    return send_file('./public/index.html')
 
-@app.route('/css/style.css', methods=['GET'])
-def style(): 
-    return app.send_static_file('./css/style.css')
+@app.route('/css/<path:path>', methods=['GET'])
+def style(path): 
+    return send_from_directory('./public/css', path)
 
-@app.route('/scripts/api_calls.js', methods=['GET'])
-def api_calls(): 
-    return app.send_static_file('./scripts/api_calls.js')
+@app.route('/scripts/<path:path>', methods=['GET'])
+def scripts(path): 
+    return send_from_directory('./public/scripts', path)
 
 class Quote(Resource):
     def get(self):
