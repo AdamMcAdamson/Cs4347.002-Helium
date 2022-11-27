@@ -27,8 +27,8 @@
         type="button" role="tab" aria-controls="borrower-management" aria-selected="false">Borrower Management</button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="fines-tab" data-bs-toggle="tab" data-bs-target="#fines"
-        type="button" role="tab" aria-controls="fines" aria-selected="false">Fines</button>
+      <button class="nav-link" id="fines-tab" data-bs-toggle="tab" data-bs-target="#fines" type="button" role="tab"
+        aria-controls="fines" aria-selected="false">Fines</button>
     </li>
   </ul>
   <div class="tab-content" id="myTabContent">
@@ -39,17 +39,21 @@
         <div class="row">
           <div class="col-10 mx-auto">
             <br>
-            <h1>Quotes</h1>
+            <div class="row">
+              <div class="col-12 mx-auto">
+                <h1>Quotes</h1>
+              </div>
+            </div>
             <br>
 
             <h3 class="d-flex col-12 justify-content-center">Click the button to get an API Response</h3>
-            
+
             <br>
             <div class="d-grid gap-2 col-3 mx-auto">
               <button id="res-btn" type="button" class="btn btn-primary btn-lg center">Click Me</button>
             </div>
             <br>
-            
+
             <ul class="list-group list-group-flush" id="res-list">
               <li class="list-group-item dummy">This is dummy data ABC</li>
               <li class="list-group-item dummy">This is dummy data XYZ</li>
@@ -79,9 +83,9 @@
               <li class="list-group-item dummy">This is dummy data XYZ</li>
               <li class="list-group-item dummy">This is dummy data 123</li>
             </ul>
-            
+
             <br>
-            
+
             <pre id="res"></pre>
           </div>
         </div>
@@ -94,11 +98,16 @@
         <div class="row">
           <div class="col-10 mx-auto">
             <br>
-            <h1>Book Search</h1>
+            <div class="row">
+              <div class="col-12 mx-auto">
+                <h1>Book Search</h1>
+              </div>
+            </div>
             <br>
             <form id="book-search-form" class="row g-3 align-items-center">
               <div class="col-10">
-                <input type="text" class="form-control" id="validationBookSearch" placeholder="Author, Title, etc.." required>
+                <input type="text" class="form-control" id="validationBookSearch" placeholder="Author, Title, etc.."
+                  required>
               </div>
               <div class="col-2">
                 <button class="btn btn-primary" type="submit">Search</button>
@@ -115,19 +124,25 @@
         <div class="row">
           <div class="col-8 mx-auto">
             <br>
-            <h1>Create Borrower</h1>
+            <div class="row">
+              <div class="col-12 mx-auto">
+                <h1>Create Borrower</h1>
+              </div>
+            </div>
             <br>
             <form id="borrower-management-form" class="row g-3 needs-validation" novalidate>
               <div class="col-6">
                 <label for="validationSSN" class="form-label">SSN</label>
-                <input type="text" class="form-control" id="validationSSN" placeholder="123-45-6789" required pattern="^(?!0{3})(?!6{3})[0-8]\d{2}-(?!0{2})\d{2}-(?!0{4})\d{4}$">
+                <input type="text" class="form-control" id="validationSSN" placeholder="123-45-6789" required
+                  pattern="^(?!0{3})(?!6{3})[0-8]\d{2}-(?!0{2})\d{2}-(?!0{4})\d{4}$">
                 <div class="invalid-feedback">
                   SSN format must be XXX-XX-XXXX.
                 </div>
               </div>
               <div class="col-6">
                 <label for="validationName" class="form-label">Name</label>
-                <input type="text" class="form-control" id="validationName" placeholder="John Snow" required pattern="^[A-Za-z\s\-\']+$">
+                <input type="text" class="form-control" id="validationName" placeholder="John Snow" required
+                  pattern="^[A-Za-z\s\-\']+$">
                 <div class="invalid-feedback">
                   Name is required.
                 </div>
@@ -142,7 +157,8 @@
               </div>
               <div class="col-6">
                 <label for="validationPhone" class="form-label">Phone</label>
-                <input type="text" class="form-control" id="validationPhone" placeholder="(555) 555-5555" pattern="^[(][0-9]{3}[)]\s[0-9]{3}[-][0-9]{4}$">
+                <input type="text" class="form-control" id="validationPhone" placeholder="(555) 555-5555"
+                  pattern="^[(][0-9]{3}[)]\s[0-9]{3}[-][0-9]{4}$">
                 <div class="invalid-feedback">
                   Phone number must be in the format (###) ###-####.
                 </div>
@@ -161,12 +177,16 @@
         <div class="row">
           <div class="col-10 mx-auto">
             <br>
-            <h1>Fines</h1>
+            <div class="row">
+              <div class="col-12 mx-auto">
+                <h1>Fines</h1>
+              </div>
+            </div>
             <br>
-          </div>
-          <div class="row">
-            <div class="d-flex col-12 justify-content-center">
-              <button class="btn btn-primary" type="button">Update Fines</button>
+            <div class="row">
+              <div class="d-flex col-12 justify-content-center">
+                <button class="btn btn-primary" type="button">Update Fines</button>
+              </div>
             </div>
           </div>
         </div>
