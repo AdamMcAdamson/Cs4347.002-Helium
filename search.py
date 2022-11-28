@@ -8,7 +8,7 @@ from consts import DB_FILE, SEARCH_PAGE_SIZE
 class Search(Resource):
 
     def get(self):
-        args = {'q':request.args.get('q', '').lower(), 'p':request.args.get('p', ''), 's':SEARCH_PAGE_SIZE('s', '')}
+        args = {'q':request.args.get('q', '').lower(), 'p':request.args.get('p', ''), 's':SEARCH_PAGE_SIZE}
 
         with sql.connect(DB_FILE) as conn:
             conn.row_factory = sql.Row

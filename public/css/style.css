@@ -18,3 +18,11 @@ h1 {
     border-radius: 3px;
     margin-bottom: 20px;
 }
+
+.book-img {
+  max-height: 150px;
+  /* height: 100%; */
+  width: 150px;
+  object-fit: contain;
+  margin: 8px;
+}
