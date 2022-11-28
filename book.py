@@ -1,8 +1,8 @@
 import sqlite3 as sql
-from flask import request
+from flask import request, make_response
 from flask_restful import Resource
 
-from consts import DB_FILE, SEARCH_PAGE_SIZE
+from consts import DB_FILE, SEARCH_PAGE_SIZE, CHECKOUT_LIMIT
 
 # @TODO: Book availability
 class Search(Resource):
@@ -36,12 +36,25 @@ class Search(Resource):
 class Checkout(Resource):
 
     def post(self):
-        args = {'isbn':request.args.get('isbn', ''), 'card_no':request.args.get('card_no', '')}
+        args = {'isbn':request.args.get('isbn', ''), 'card_id':request.args.get('card_id', '')}
 
         with sql.connect(DB_FILE) as conn:
             conn.row_factory = sql.Row
             c = conn.cursor()
 
-            sql_query = '''
-            '''
-            return
+            if dict(c.execute('SELECT COUNT(*) AS count FROM BOOK WHERE Isbn == :isbn', args).fetchone())['count'] != 1:
+                return make_response("Unknown book.", 400)
+
+            # @TODO: Update count check to number of copies of book available (should we want to support this)
+            if dict(c.execute('SELECT COUNT(*) AS count FROM BOOK_LOANS WHERE Isbn == :isbn AND Date_in IS NULL', args).fetchone())['count'] >= 1:
+                return make_response("The requested book is unavailable.", 409)
+
+            if dict(c.execute('SELECT COUNT(*) AS count FROM BOOK_LOANS WHERE Card_id == :card_id AND Date_in IS NULL', args).fetchone())['count'] >= CHECKOUT_LIMIT:
+                return make_response("Borrower has too many books checked out.", 409)
+
+            sql_query = "INSERT INTO BOOK_LOANS (Isbn, Card_id) VALUES (:isbn, :card_id)"
+            c.execute(sql_query, args)
+
+            print(dict(c.execute('SELECT COUNT(*) AS count, isbn, Date_in FROM BOOK_LOANS GROUP BY Isbn', ()).fetchone()))
+
+            return make_response("Book successfully checked out.", 200)
