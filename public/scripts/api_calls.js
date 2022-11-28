@@ -51,6 +51,11 @@ function bookSearch(){
         book_search_list.removeChild(book_search_list.lastChild);
       }
       
+      // no books match query
+      if (data.length === 0){
+        book_search_list.innerHTML += `<h3 style="text-align:center;">No books found.</h3>`
+      }
+
       // populate list
       for (var i = 0; i < data.length; i++){
         book_search_list.innerHTML += `<li id="book-`+ i + `" isbn="` + data[i].Isbn + `" class="card m-2 box-shadow dummy d-flex flex-md-row align-items-center">
