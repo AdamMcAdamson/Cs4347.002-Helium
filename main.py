@@ -6,7 +6,7 @@ import sqlite3 as sql
 import sys
 
 from consts import DB_FILE
-from book import Search, Checkout
+from book import Search, Checkout, Checkin
 
 app = Flask(__name__) 
 api = Api(app)
@@ -69,6 +69,8 @@ api.add_resource(Quote, '/quote', endpoint='quote')
 api.add_resource(Search, '/book/search', endpoint='search')
 
 api.add_resource(Checkout, '/book/checkout', endpoint='checkout')
+
+api.add_resource(Checkin, '/book/checkin', endpoint='checkin')
 
 if __name__ == '__main__':
 
