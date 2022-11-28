@@ -5,7 +5,7 @@ from views import views_blueprint
 import sqlite3 as sql
 
 from consts import DB_FILE
-from search import Search
+from book import Search, Checkout
 
 app = Flask(__name__) 
 api = Api(app)
@@ -66,6 +66,8 @@ def create_borrower():
 api.add_resource(Quote, '/quote', endpoint='quote')
 
 api.add_resource(Search, '/book/search', endpoint='search')
+
+api.add_resource(Checkout, '/book/checkout', endpoint='checkout')
 
 if __name__ == '__main__':
 
