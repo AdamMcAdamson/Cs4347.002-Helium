@@ -33,6 +33,29 @@ CREATE TABLE BORROWER (
     Phone CHAR(14)
 );
 
+DROP TABLE IF EXISTS BOOK_LOANS;
+
+CREATE TABLE BOOK_LOANS (
+    Loan_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Isbn CHAR(10) NOT NULL,
+    Card_id INTEGER NOT NULL,
+    Date_out DATE NOT NULL DEFAULT CURRENT_DATE,
+    Due_date DATE NOT NULL DEFAULT (DATE(CURRENT_DATE, '14 days')) CHECK(DATE(Due_date, '-14 days') == Date_out),
+    Date_in DATE,
+    FOREIGN KEY (Isbn) REFERENCES BOOK (Isbn),
+    FOREIGN KEY (Card_id) REFERENCES BORROWER (Card_id)
+);
+
+DROP TABLE IF EXISTS FINES;
+
+CREATE TABLE FINES (
+    Loan_id INTEGER PRIMARY KEY,
+    Fine_amt INTEGER NOT NULL,
+    Paid INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY (Loan_id) REFERENCES BOOK_LOANS (Loan_id)
+);
+
+
 INSERT INTO BOOK (Isbn, Title, Cover_url)
 	VALUES
 		('0195153448', 'Classical Mythology', 'https://images.isbndb.com/covers/34/46/9780195153446.jpg'),
