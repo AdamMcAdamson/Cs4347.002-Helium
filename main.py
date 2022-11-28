@@ -8,6 +8,8 @@ import sys
 from consts import DB_FILE
 from book import Search, Checkout, Checkin
 
+from fines import FinesAll
+
 app = Flask(__name__) 
 api = Api(app)
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
@@ -71,6 +73,8 @@ api.add_resource(Search, '/book/search', endpoint='search')
 api.add_resource(Checkout, '/book/checkout', endpoint='checkout')
 
 api.add_resource(Checkin, '/book/checkin', endpoint='checkin')
+
+api.add_resource(FinesAll, '/fines/all', endpoint='fines_all')
 
 if __name__ == '__main__':
 
