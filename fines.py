@@ -48,7 +48,7 @@ class FinesUpdate(Resource):
             # Fine_amt will be updated with the other existing fines 
             create_new_fine_query = '''
             INSERT INTO FINES (Loan_id, Fine_amt)
-            VALUES (:Loan_id, 0)
+            VALUES (:Loan_id, 0);
             '''
 
             for fine in new_fines:
