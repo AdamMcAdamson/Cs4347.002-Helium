@@ -40,35 +40,24 @@ class Quote(Resource):
 
 @app.route('/borrower/create', methods=['GET', 'POST'])
 def create_borrower():
-    form = NewBorrowerForm()
     
-    if form.validate_on_submit():
-        ssn = request.form["ssn"]
-        bname = request.form["name"]
-        address = request.form["address"]
-        phone = request.form["phone"]
+    args = {'ssn':request.args.get('ssn', ''), 'bname':request.args.get('bname', ''), 'address':request.args.get('address', ''), 'phone':request.args.get('phone', 'NULL')}
 
-        with sql.connect(DB_FILE) as conn:
-            conn.row_factory = sql.Row
-            c = conn.cursor()
-            # Check for existing SSN and return useful error if it already exists
-            if c.execute('SELECT * FROM BORROWER WHERE Ssn = ?', (ssn,)).fetchone():
-                flash(f'Only one borrower card per person. Ssn must be unique.', 'danger')
-                return render_template('new_borrower.html', form=form, title='Create New Borrower')
-            #if dict(c.execute('SELECT * FROM BORROWER WHERE Ssn = ?', (ssn,)).fetchone())['count'] >= 1:
-            #    return make_response("Only one borrower card per person. Ssn must be unique.", 409)
-            
-            # Create borrower
-            command = "INSERT INTO BORROWER (Ssn, Bname, Address, Phone) VALUES (?, ?, ?, ?);"
-            c.execute(
-                command,
-                (ssn, bname, address, phone,)
-            )
-            flash(f'Account created for {form.name.data}!', 'success')
-            #return make_response("Account created for {form.name.data}!", 200)
-            
-            # @TODO add redirection page
-            return render_template('new_borrower.html', form=form, title='Create New Borrower')
+    with sql.connect(DB_FILE) as conn:
+        conn.row_factory = sql.Row
+        c = conn.cursor()
+        
+        # Check for existing SSN and return useful error if it already exists
+        if c.execute("SELECT * FROM BORROWER WHERE Ssn = :ssn", args).fetchone():
+            return {"message": "Only one borrower card per person. Ssn must be unique."}, 409
+        
+        # Create borrower
+        command = "INSERT INTO BORROWER (Ssn, Bname, Address, Phone) VALUES (:ssn, :bname, :address, :phone);"
+        c.execute(command, args)
+
+        card_id = c.execute("SELECT Card_id FROM BORROWER WHERE Ssn = :ssn", args).fetchone()["Card_id"]
+        return {"message": "Borrower Successfully Created. Card ID: Ssn must be unique.", "card_id": card_id}, 200
+        
 
 api.add_resource(Quote, '/quote', endpoint='quote')
 

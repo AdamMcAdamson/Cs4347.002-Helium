@@ -25,7 +25,11 @@ window.addEventListener("load", () => {
     event.preventDefault()
     if (!borrowerManagementForm.checkValidity()) {
       event.stopPropagation()
+      borrowerManagementForm.classList.add('was-validated')
+      return
     }
+    createBorrower()
+    
     // @TODO: Call borrower/create endpoint and handle duplicate SSN error
     borrowerManagementForm.classList.add('was-validated')
   }, false)
