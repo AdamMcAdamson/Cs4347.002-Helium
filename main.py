@@ -58,7 +58,7 @@ def create_borrower():
         c.execute(command, args)
 
         card_id = c.execute("SELECT Card_id FROM BORROWER WHERE Ssn = :ssn", args).fetchone()["Card_id"]
-        return {"message": "Borrower Successfully Created. Card ID: " + card_id + ".", "card_id": card_id}, 200
+        return {"message": "Borrower Successfully Created. Card ID: " + 'ID{:0>6}'.format(str(card_id)) + ".", "card_id_str": 'ID{:0>6}'.format(str(card_id)), "card_id_num": card_id}, 200
         
 
 # Endpoints
