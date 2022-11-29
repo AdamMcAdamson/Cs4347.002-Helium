@@ -80,7 +80,7 @@ function bookSearch(){
 }
 
 function createBorrower(){
-  
+  /*
   var borrower_list = document.getElementById('book-search-res');
   var SSN = document.getElementById('validationSSN').value;
   var name = document.getElementById('validationName').value;
@@ -101,13 +101,15 @@ function createBorrower(){
       while (borrower_list.lastChild) {
         borrower_list.removeChild(borrower_list.lastChild);
       }
-      borrower_list.innerHTML += `<h3 style="text-align:center;">New borrower created!</h3>`
+      borrower_list.innerHTML += `<li class="dummy data">A new borrower has not been created.</li>`
 
       
   }).catch(err => {
       // Do something for an error here
   });
   //return response.json();
+  */
+ return 0
 }
 
 window.addEventListener("load", () => {
