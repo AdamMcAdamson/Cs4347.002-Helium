@@ -79,6 +79,37 @@ function bookSearch(){
   });
 }
 
+function createBorrower(){
+  
+  var borrower_list = document.getElementById('book-search-res');
+  var SSN = document.getElementById('validationSSN').value;
+  var name = document.getElementById('validationName').value;
+  var address = document.getElementById('validationAddress').value;
+  var phone = document.getElementById('validationPhone').value;
+
+  //empty fields
+  if (SSN === null || name === null || address === null) return
+
+  var base_query = "borrower/create"
+  var query = base_query + "?q=" + SSN + "&p=" + 1
+
+  fetch(query).then(response => {
+      //return response.json();
+  }).then(res => {
+      var data = res
+      //clear list
+      while (borrower_list.lastChild) {
+        borrower_list.removeChild(borrower_list.lastChild);
+      }
+      borrower_list.innerHTML += `<h3 style="text-align:center;">New borrower created!</h3>`
+
+      
+  }).catch(err => {
+      // Do something for an error here
+  });
+  //return response.json();
+}
+
 window.addEventListener("load", () => {
     var button = document.getElementById("res-btn");
     button.addEventListener("click", getQuotes);
