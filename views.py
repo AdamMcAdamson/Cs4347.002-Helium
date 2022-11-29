@@ -11,6 +11,6 @@ def create_borrow():
     if form.validate_on_submit():
         flash(f'Account created for {form.name.data}!', 'success') # must have python 3.6 and up 
         # TODO create a page to redirect to after creating a new borrower and validate if ssn is not already in the db
-        #return redirect(url_for()) 
+        #return redirect(url_for())
     return render_template('new_borrower.html', form=form, title='Create New Borrower')
 
