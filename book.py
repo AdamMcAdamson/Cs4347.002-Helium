@@ -45,21 +45,25 @@ class Checkout(Resource):
             c = conn.cursor()
 
             if dict(c.execute('SELECT COUNT(*) AS count FROM BOOK WHERE Isbn == :isbn', args).fetchone())['count'] != 1:
-                return make_response("Unknown book.", 400)
+                return {"message": "Unknown book."}, 400
+
+            if dict(c.execute('SELECT COUNT(*) AS count FROM BORROWER WHERE Card_id == :card_id', args).fetchone())['count'] != 1:
+                return {"message": "Unknown borrower. Please ensure you entered the correct card id."}, 409
 
             # @TODO: Update count check to number of copies of book available (should we want to support this)
             if dict(c.execute('SELECT COUNT(*) AS count FROM BOOK_LOANS WHERE Isbn == :isbn AND Date_in IS NULL', args).fetchone())['count'] >= 1:
-                return make_response("The requested book is unavailable.", 409)
+                return {"message": "The requested book is unavailable."}, 409
 
             if dict(c.execute('SELECT COUNT(*) AS count FROM BOOK_LOANS WHERE Card_id == :card_id AND Date_in IS NULL', args).fetchone())['count'] >= CHECKOUT_LIMIT:
-                return make_response("Borrower has too many books checked out.", 409)
+                return {"message": "Borrower has too many books checked out."}, 409
+
 
             sql_query = "INSERT INTO BOOK_LOANS (Isbn, Card_id) VALUES (:isbn, :card_id)"
             c.execute(sql_query, args)
 
             print(dict(c.execute('SELECT COUNT(*) AS count, isbn, Date_in FROM BOOK_LOANS GROUP BY Isbn', ()).fetchone()))
 
-            return make_response("Book successfully checked out.", 200)
+            return {"message": "Book successfully checked out."}, 200
 
 
 class Checkin(Resource):
@@ -88,7 +92,7 @@ class Checkin(Resource):
         args = {'loan_id':request.args.get('loan_id', '')}
 
         if args['loan_id'] == '':
-            return make_response("Bad Request. Missing query parameters (loan_id).", 400)
+            return {"message": "Bad Request. Missing query parameters (loan_id)."}, 400
 
 
         with sql.connect(DB_FILE) as conn:
@@ -96,7 +100,7 @@ class Checkin(Resource):
             c = conn.cursor()
 
             if dict(c.execute('SELECT COUNT(*) AS count FROM BOOK_LOANS WHERE Loan_id == :loan_id AND Date_in IS NOT NULL', args).fetchone())['count'] == 1:
-                return make_response("Book is already returned.", 409)
+                return {"message": "Book is already returned."}, 409
 
             sql_query = '''
             UPDATE BOOK_LOANS
@@ -106,7 +110,7 @@ class Checkin(Resource):
 
             c.execute(sql_query, args)
             
-            return make_response("Book successfully checked in.", 200)
+            return {"message": "Book successfully checked in."}, 200
 
 
 
