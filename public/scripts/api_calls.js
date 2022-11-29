@@ -162,15 +162,46 @@ function createBorrower(){
   var address = document.getElementById('validationAddress').value;
   var phone = document.getElementById('validationPhone').value;
 
+  var alert_elem = document.getElementById('borrower-alert')
 
   var base_query = "borrower/create"
   var query = base_query + "?ssn=" + ssn + "&name=" + name + "&address=" + address + "&phone=" + phone
 
-  fetch(query).then(response => {
-      return response.json();
+  fetch(query, { 
+    method: "POST"
+  }).then(response => {
+    return response.json().then(data => ({status: response.status, message: data.message, data: data}))
   }).then(res => {
-      var data = res
+      console.log(alert_elem.getAttributeNames())
+
+      console.log(res.status)
       
+      while (alert_elem.lastChild) {
+        alert_elem.removeChild(alert_elem.lastChild);
+      }
+      
+      if (res.status != 200) {
+        alert_elem.innerHTML += `
+        <div class="alert alert-warning d-flex align-items-center alert-dismissible fade show" role="alert">
+          <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+          <div>
+            <strong>Error:</strong> ` + res.message + `
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        </div>
+        `
+      } else {
+        alert_elem.innerHTML += `
+        <div class="alert alert-success d-flex align-items-center alert-dismissible fade show" role="alert">
+          <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+          <div>
+            ` + res.message + `
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        `
+      }
+
   }).catch(err => {
       // Do something for an error here
   });
