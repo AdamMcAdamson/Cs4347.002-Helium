@@ -29,6 +29,7 @@ def style(path):
 def scripts(path): 
     return send_from_directory('./public/scripts', path)
 
+# @TODO: Remove
 class Quote(Resource):
     def get(self):
         args = request.args
@@ -38,7 +39,8 @@ class Quote(Resource):
             #return jsonify({"message": 200, "success":True, "data": [dict(x) for x in (c.execute('SELECT * FROM quote').fetchall())]})
             return [dict(x) for x in (c.execute('SELECT * FROM quote').fetchall())]
 
-@app.route('/borrower/create', methods=['GET', 'POST'])
+# @TODO: Move to Own File
+@app.route('/borrower/create', methods=['POST'])
 def create_borrower():
     
     args = {'ssn':request.args.get('ssn', ''), 'bname':request.args.get('bname', ''), 'address':request.args.get('address', ''), 'phone':request.args.get('phone', 'NULL')}
@@ -56,11 +58,10 @@ def create_borrower():
         c.execute(command, args)
 
         card_id = c.execute("SELECT Card_id FROM BORROWER WHERE Ssn = :ssn", args).fetchone()["Card_id"]
-        return {"message": "Borrower Successfully Created. Card ID: Ssn must be unique.", "card_id": card_id}, 200
+        return {"message": "Borrower Successfully Created. Card ID: " + card_id + ".", "card_id": card_id}, 200
         
 
-api.add_resource(Quote, '/quote', endpoint='quote')
-
+# Endpoints
 api.add_resource(Search, '/book/search', endpoint='search')
 
 api.add_resource(Checkout, '/book/checkout', endpoint='checkout')
@@ -71,8 +72,12 @@ api.add_resource(FinesAll, '/fines/all', endpoint='fines_all')
 
 api.add_resource(FinesUpdate, '/fines/update', endpoint='fines_update')
 
+# @TODO: Remove
+api.add_resource(Quote, '/quote', endpoint='quote')
+
 if __name__ == '__main__':
 
+    # DB reset command line argument
     for arg in sys.argv:
         if arg == "db-reset":
             with sql.connect(DB_FILE) as conn:
