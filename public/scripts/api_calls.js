@@ -153,36 +153,27 @@ function bookCheckoutForm(event){
 }
 
 function createBorrower(){
-  /*
+  
   var borrower_list = document.getElementById('book-search-res');
   var SSN = document.getElementById('validationSSN').value;
   var name = document.getElementById('validationName').value;
   var address = document.getElementById('validationAddress').value;
   var phone = document.getElementById('validationPhone').value;
 
-  //empty fields
-  if (SSN === null || name === null || address === null) return
 
   var base_query = "borrower/create"
-  var query = base_query + "?q=" + SSN + "&p=" + 1
+  var query = base_query + "?snn=" + SSN + "&name=" + name + "&address=" + address + "&phone=" + phone
 
   fetch(query).then(response => {
-      //return response.json();
+      return response.json();
   }).then(res => {
       var data = res
-      //clear list
-      while (borrower_list.lastChild) {
-        borrower_list.removeChild(borrower_list.lastChild);
-      }
-      borrower_list.innerHTML += `<li class="dummy data">A new borrower has not been created.</li>`
-
       
   }).catch(err => {
       // Do something for an error here
   });
   //return response.json();
-  */
- return 0
+  
 }
 
 window.addEventListener("load", () => {
