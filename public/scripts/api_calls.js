@@ -172,41 +172,37 @@ function createBorrower(){
   }).then(response => {
     return response.json().then(data => ({status: response.status, message: data.message, data: data}))
   }).then(res => {
-      console.log(alert_elem.getAttributeNames())
-
-      console.log(res.status)
       
-      while (alert_elem.lastChild) {
-        alert_elem.removeChild(alert_elem.lastChild);
-      }
-      
-      if (res.status != 200) {
-        alert_elem.innerHTML += `
-        <div class="alert alert-warning d-flex align-items-center alert-dismissible fade show" role="alert">
-          <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
-          <div>
-            <strong>Error:</strong> ` + res.message + `
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        </div>
-        `
-      } else {
-        alert_elem.innerHTML += `
-        <div class="alert alert-success d-flex align-items-center alert-dismissible fade show" role="alert">
-          <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
-          <div>
-            ` + res.message + `
-          </div>
+    // Remove old alerts
+    while (alert_elem.lastChild) {
+      alert_elem.removeChild(alert_elem.lastChild);
+    }
+    
+    if (res.status != 200) { // Not Successful Creation
+      alert_elem.innerHTML += `
+      <div class="alert alert-warning d-flex align-items-center alert-dismissible fade show" role="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+        <div>
+          <strong>Error:</strong> ` + res.message + `
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        `
-      }
+      </div>
+      `
+    } else { // Successful Creation
+      alert_elem.innerHTML += `
+      <div class="alert alert-success d-flex align-items-center alert-dismissible fade show" role="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+        <div>
+          ` + res.message + `
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      `
+    }
 
   }).catch(err => {
       // Do something for an error here
   });
-  //return response.json();
-  
 }
 
 window.addEventListener("load", () => {
