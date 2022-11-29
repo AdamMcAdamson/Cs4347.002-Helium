@@ -155,14 +155,14 @@ function bookCheckoutForm(event){
 function createBorrower(){
   
   var borrower_list = document.getElementById('book-search-res');
-  var SSN = document.getElementById('validationSSN').value;
+  var ssn = document.getElementById('validationSSN').value;
   var name = document.getElementById('validationName').value;
   var address = document.getElementById('validationAddress').value;
   var phone = document.getElementById('validationPhone').value;
 
 
   var base_query = "borrower/create"
-  var query = base_query + "?snn=" + SSN + "&name=" + name + "&address=" + address + "&phone=" + phone
+  var query = base_query + "?ssn=" + ssn + "&name=" + name + "&address=" + address + "&phone=" + phone
 
   fetch(query).then(response => {
       return response.json();
