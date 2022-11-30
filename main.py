@@ -1,7 +1,5 @@
 from flask import Flask, request, jsonify, render_template, flash, redirect, send_file, send_from_directory
-from flask_restful import Resource, Api
-from forms import NewBorrowerForm
-from views import views_blueprint
+from flask_restful import Api
 import sqlite3 as sql
 import sys
 
@@ -28,16 +26,6 @@ def style(path):
 @app.route('/scripts/<path:path>', methods=['GET'])
 def scripts(path): 
     return send_from_directory('./public/scripts', path)
-
-# @TODO: Remove
-class Quote(Resource):
-    def get(self):
-        args = request.args
-        with sql.connect(DB_FILE) as conn:
-            conn.row_factory = sql.Row
-            c = conn.cursor()
-            #return jsonify({"message": 200, "success":True, "data": [dict(x) for x in (c.execute('SELECT * FROM quote').fetchall())]})
-            return [dict(x) for x in (c.execute('SELECT * FROM quote').fetchall())]
 
 # @TODO: Move to Own File
 @app.route('/borrower/create', methods=['POST'])

@@ -10,24 +10,25 @@ class FinesPayment(Resource):
 
         args = {'loan_id':request.args.get('loan_id', '')}
 
-        with sql.connect(DB_FILE) as conn:
-            conn.row_factory = sql.Row
-            c = conn.cursor()
+        # @TODO: Fix
+        # with sql.connect(DB_FILE) as conn:
+        #     conn.row_factory = sql.Row
+        #     c = conn.cursor()
 
-            sql_query = '''
-            UPDATE (FINES NATURAL JOIN BOOK_LOANS)
-            SET Paid = 1
-            WHERE Date_in IS NOT NULL
-            RETURNING *;
-            '''
+        #     sql_query = '''
+        #     UPDATE (FINES NATURAL JOIN BOOK_LOANS)
+        #     SET Paid = 1
+        #     WHERE Date_in IS NOT NULL AND Loan_id == :loan_id
+        #     RETURNING *;
+        #     '''
 
-            ret = c.execute(sql_query).fetchone()
-            if ret != flask:
-                return "Successfully paid fine for loan {loan_id}".format(args), 200
-            else:
-                return "Could not pay fine for loan {loan_id}, make sure the book has been returned".format(args), 409
+        #     ret = c.execute(sql_query).fetchone()
+        #     if ret != flask:
+        #         return "Successfully paid fine for loan {loan_id}".format(args), 200
+        #     else:
+        #         return "Could not pay fine for loan {loan_id}, make sure the book has been returned".format(args), 409
 
-        return 
+        return {},200
 
 class FinesAll(Resource):
 
