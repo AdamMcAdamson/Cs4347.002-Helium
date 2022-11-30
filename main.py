@@ -29,6 +29,7 @@ def style(path):
 def scripts(path): 
     return send_from_directory('./public/scripts', path)
 
+# @TODO: Remove
 class Quote(Resource):
     def get(self):
         args = request.args
@@ -38,35 +39,29 @@ class Quote(Resource):
             #return jsonify({"message": 200, "success":True, "data": [dict(x) for x in (c.execute('SELECT * FROM quote').fetchall())]})
             return [dict(x) for x in (c.execute('SELECT * FROM quote').fetchall())]
 
-@app.route('/borrower/create', methods=['GET', 'POST'])
+# @TODO: Move to Own File
+@app.route('/borrower/create', methods=['POST'])
 def create_borrower():
-    form = NewBorrowerForm()
     
-    if form.validate_on_submit():
-        ssn = request.form["ssn"]
-        bname = request.form["name"]
-        address = request.form["address"]
-        phone = request.form["phone"]
+    args = {'ssn':request.args.get('ssn', ''), 'bname':request.args.get('bname', ''), 'address':request.args.get('address', ''), 'phone':request.args.get('phone', 'NULL')}
 
-        with sql.connect(DB_FILE) as conn:
-            conn.row_factory = sql.Row
-            c = conn.cursor()
-            # Check for existing SSN and return useful error if it already exists
-            if c.execute('SELECT * FROM BORROWER WHERE Ssn = ?', (ssn,)).fetchone():
-                flash(f'Only one borrower card per person. Ssn must be unique.', 'danger')
-                return render_template('new_borrower.html', form=form, title='Create New Borrower')
-            # Create borrower
-            command = "INSERT INTO BORROWER (Ssn, Bname, Address, Phone) VALUES (?, ?, ?, ?);"
-            c.execute(
-                command,
-                (ssn, bname, address, phone,)
-            )
-            flash(f'Account created for {form.name.data}!', 'success')
-            # @TODO add redirection page
-    return render_template('new_borrower.html', form=form, title='Create New Borrower')
+    with sql.connect(DB_FILE) as conn:
+        conn.row_factory = sql.Row
+        c = conn.cursor()
+        
+        # Check for existing SSN and return useful error if it already exists
+        if c.execute("SELECT * FROM BORROWER WHERE Ssn = :ssn", args).fetchone():
+            return {"message": "Only one borrower card per person. Ssn must be unique."}, 409
+        
+        # Create borrower
+        command = "INSERT INTO BORROWER (Ssn, Bname, Address, Phone) VALUES (:ssn, :bname, :address, :phone);"
+        c.execute(command, args)
 
-api.add_resource(Quote, '/quote', endpoint='quote')
+        card_id = c.execute("SELECT Card_id FROM BORROWER WHERE Ssn = :ssn", args).fetchone()["Card_id"]
+        return {"message": "Borrower Successfully Created. Card ID: " + 'ID{:0>6}'.format(str(card_id)) + ".", "card_id_str": 'ID{:0>6}'.format(str(card_id)), "card_id_num": card_id}, 200
+        
 
+# Endpoints
 api.add_resource(Search, '/book/search', endpoint='search')
 
 api.add_resource(Checkout, '/book/checkout', endpoint='checkout')
@@ -81,6 +76,7 @@ api.add_resource(FinesPayment, '/fines/payment', endpoint='fines_payment')
 
 if __name__ == '__main__':
 
+    # DB reset command line argument
     for arg in sys.argv:
         if arg == "db-reset":
             with sql.connect(DB_FILE) as conn:

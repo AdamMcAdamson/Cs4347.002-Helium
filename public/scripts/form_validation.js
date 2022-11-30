@@ -25,13 +25,23 @@ window.addEventListener("load", () => {
     event.preventDefault()
     if (!borrowerManagementForm.checkValidity()) {
       event.stopPropagation()
+      borrowerManagementForm.classList.add('was-validated')
+      return
     }
+    createBorrower()
+    
     // @TODO: Call borrower/create endpoint and handle duplicate SSN error
     borrowerManagementForm.classList.add('was-validated')
   }, false)
 
 
   var bookSearchForm = document.querySelector('#book-search-form')
+  bookSearchForm.addEventListener('submit', function(event){
+    event.preventDefault()
+    // @TODO: Fetch Search endpoint and populate table
+  }, false)
+
+  var bookSearchForm = document.querySelector('#book-checkin-form')
   bookSearchForm.addEventListener('submit', function(event){
     event.preventDefault()
     // @TODO: Fetch Search endpoint and populate table
