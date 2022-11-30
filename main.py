@@ -7,7 +7,7 @@ import sys
 
 from consts import DB_FILE
 from book import Search, Checkout, Checkin
-from fines import FinesAll, FinesUpdate
+from fines import FinesAll, FinesUpdate, FinesPayment
 
 app = Flask(__name__) 
 api = Api(app)
@@ -72,8 +72,7 @@ api.add_resource(FinesAll, '/fines/all', endpoint='fines_all')
 
 api.add_resource(FinesUpdate, '/fines/update', endpoint='fines_update')
 
-# @TODO: Remove
-api.add_resource(Quote, '/quote', endpoint='quote')
+api.add_resource(FinesPayment, '/fines/payment', endpoint='fines_payment')
 
 if __name__ == '__main__':
 
