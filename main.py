@@ -11,9 +11,6 @@ app = Flask(__name__)
 api = Api(app)
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 
-# Register the blueprints 
-app.register_blueprint(views_blueprint, url_prefix='/views')
-
 # Serve Static Files
 @app.route('/', methods=['GET'])
 def index(): 
