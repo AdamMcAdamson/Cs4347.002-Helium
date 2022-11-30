@@ -1,5 +1,5 @@
 import sqlite3 as sql
-from flask import request, make_response
+from flask import request
 from flask_restful import Resource
 
 from consts import DB_FILE, SEARCH_PAGE_SIZE, CHECKOUT_LIMIT
@@ -38,7 +38,7 @@ class Checkout(Resource):
         args = {'isbn':request.args.get('isbn', ''), 'card_id':request.args.get('card_id', '')}
 
         if args['isbn'] == '' or args['card_id'] == '':
-            return make_response("Bad Request. Missing query parameters (isbn, card_id).", 400)
+            return {"message": "Bad Request. Missing query parameters (isbn, card_id)."}, 400
 
         with sql.connect(DB_FILE) as conn:
             conn.row_factory = sql.Row

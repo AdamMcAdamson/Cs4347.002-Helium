@@ -34,11 +34,20 @@ class FinesAll(Resource):
     # @TODO: Pagination or no?
     def get(self):
 
+        args = {'paid':request.args.get('paid', '')}
+
         with sql.connect(DB_FILE) as conn:
             conn.row_factory = sql.Row
             c = conn.cursor()
-
-            sql_query = '''SELECT * FROM FINES;'''
+            if args['paid'] == '':
+                sql_query = '''SELECT *
+                FROM FINES NATURAL JOIN BOOK_LOANS
+                ORDER BY Card_id;'''
+            else: 
+                sql_query = '''SELECT *
+                FROM FINES NATURAL JOIN BOOK_LOANS
+                WHERE Paid == FALSE
+                ORDER BY Card_id;'''
 
             return [dict(x) for x in c.execute(sql_query).fetchall()]
             
@@ -55,8 +64,8 @@ class FinesUpdate(Resource):
             
             # book not returned
             get_new_fines_query = '''
-            SELECT Loan_id
-            FROM BOOK_LOANS LEFT JOIN FINES ON Loan_id
+            SELECT BOOK_LOANS.Loan_id As Loan_id
+            FROM (BOOK_LOANS LEFT JOIN FINES ON BOOK_LOANS.Loan_id = FINES.Loan_id)
             WHERE Paid IS NULL AND Date_in IS NULL AND DATE(CURRENT_DATE) > Due_date;
             '''
 
@@ -64,8 +73,8 @@ class FinesUpdate(Resource):
 
             # book returned
             get_new_returned_fines_query = '''
-            SELECT Loan_id
-            FROM BOOK_LOANS LEFT JOIN FINES ON Loan_id
+            SELECT BOOK_LOANS.Loan_id As Loan_id
+            FROM (BOOK_LOANS LEFT JOIN FINES ON BOOK_LOANS.Loan_id = FINES.Loan_id)
             WHERE Paid IS NULL AND Date_in IS NOT NULL AND Date_in > Due_date;
             '''
             
@@ -120,5 +129,7 @@ class FinesUpdate(Resource):
 
             for fine in returned_fines:
                 c.execute(update_existing_returned_fine_query, fine)
+
+            return {"message": "success"}, 200
 
 
