@@ -40,4 +40,10 @@ window.addEventListener("load", () => {
     event.preventDefault()
     // @TODO: Fetch Search endpoint and populate table
   }, false)
+
+  var bookSearchForm = document.querySelector('#book-checkin-form')
+  bookSearchForm.addEventListener('submit', function(event){
+    event.preventDefault()
+    // @TODO: Fetch Search endpoint and populate table
+  }, false)
 })

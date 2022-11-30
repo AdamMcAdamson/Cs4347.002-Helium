@@ -69,7 +69,7 @@ class Checkout(Resource):
 class Checkin(Resource):
 
     def get(self):
-        args = {'q':request.args.get('q', '').lower(), 'p':request.args.get('p', ''), 's':SEARCH_PAGE_SIZE}
+        args = {'q':request.args.get('q', '').lower()}#, 'p':request.args.get('p', ''), 's':SEARCH_PAGE_SIZE}
 
         with sql.connect(DB_FILE) as conn:
             conn.row_factory = sql.Row
@@ -78,15 +78,15 @@ class Checkin(Resource):
             sql_query = '''
             SELECT Loan_id, Isbn, Card_id, Date_out, Due_date, BName
             FROM BOOK_LOANS NATURAL JOIN BORROWER
-            WHERE INSTR(LOWER(BName), :q) > 0
+            WHERE Date_in IS NULL
+            AND (INSTR(LOWER(BName), :q) > 0
             OR INSTR(LOWER(Card_id), :q) > 0
-            OR INSTR(LOWER(Isbn), :q) > 0
+            OR INSTR(LOWER(Isbn), :q) > 0)
             ORDER BY INSTR(LOWER(BName), :q), INSTR(LOWER(Card_id), :q), INSTR(LOWER(Isbn), :q)
-            LIMIT :s OFFSET (:p-1)*:s
             ;
             '''
-
-            return [dict(x) for x in c.execute(sql_query, args).fetchmany(size=SEARCH_PAGE_SIZE)]
+            # LIMIT :s OFFSET (:p-1)*:s
+            return [dict(x) for x in c.execute(sql_query, args).fetchall()] #fetchmany(size=SEARCH_PAGE_SIZE)
 
     def post(self):
         args = {'loan_id':request.args.get('loan_id', '')}
