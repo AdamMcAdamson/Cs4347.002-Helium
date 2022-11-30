@@ -1,7 +1,33 @@
 import sqlite3 as sql
+from flask import request
 from flask_restful import Resource
 
 from consts import DB_FILE#, SEARCH_PAGE_SIZE
+
+class FinesPayment(Resource):
+
+    def put(self):
+
+        args = {'loan_id':request.args.get('loan_id', '')}
+
+        with sql.connect(DB_FILE) as conn:
+            conn.row_factory = sql.Row
+            c = conn.cursor()
+
+            sql_query = '''
+            UPDATE (FINES NATURAL JOIN BOOK_LOANS)
+            SET Paid = 1
+            WHERE Date_in IS NOT NULL
+            RETURNING *;
+            '''
+
+            ret = c.execute(sql_query).fetchone()
+            if ret != flask:
+                return "Successfully paid fine for loan {loan_id}".format(args), 200
+            else:
+                return "Could not pay fine for loan {loan_id}, make sure the book has been returned".format(args), 409
+
+        return 
 
 class FinesAll(Resource):
 
