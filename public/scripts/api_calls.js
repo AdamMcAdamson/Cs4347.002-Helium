@@ -238,7 +238,7 @@ function bookCheckin(loan_id){
 
 function createBorrower(){
   
-  var borrower_list = document.getElementById('book-search-res');
+  // var borrower_list = document.getElementById('book-search-res');
   var ssn = document.getElementById('validationSSN').value;
   var name = document.getElementById('validationName').value;
   var address = document.getElementById('validationAddress').value;
@@ -287,6 +287,114 @@ function createBorrower(){
   });
 }
 
+function getFines(){
+  
+  var fines_list = document.getElementById('fines-res');
+  var paid = false
+
+  var base_query = "fines/all"
+  var query;
+  if (!paid){
+    query = base_query
+  } else {
+    query = base_query + "?paid=FALSE"
+  }
+
+  fetch(query).then(response => {
+    return response.json()
+  }).then(res => {
+
+    var data = res
+
+    console.log(data)
+
+    while (fines_list.lastChild) {
+      fines_list.removeChild(fines_list.lastChild);
+    }
+
+    var prev_id = -1;
+    var fine_group = "";
+    var base_elem_start = `<li class="card m-2 box-shadow dummy d-flex flex-md-row align-items-center">
+      <div class="card-body d-flex flex-column align-items-start">`;
+    var elem_mid = ""
+    var fine_amt = 0;
+    
+    var base_elem_end = "</ul></li>";  
+
+    for (fine in data){
+      if (fine.Card_id == prev_id){
+        console.log("HI")
+        fine_group += `
+          <li class="card m-2 box-shadow dummy d-flex flex-md-row align-items-center">
+            <div class="card-body d-flex flex-column align-items-start">
+              <p class="card-test mb-auto">ISBN: ` + fine.Isbn + `, Due: ` +  fine.Due_date + `</p>
+              <p class="card-test mb-auto">Fine Amount: ` +  (fine.fine_amt/100).toFixed(2) + ", Paid: <b>" + p + `<b></p>
+            </div>
+            <div class="col-2 align-self-center m-4 mt-0 mb-2">
+              <button onclick="bookCheckin('` + fine.Loan_id + `')" class="btn btn-primary p-2 checkin-book-btn" type="button">Check-in Book</button>
+            </div>
+          </li>`
+        fine_amt += fine.fine_amt
+      } else {
+        console.log("DUP")
+        var p = -1;
+        if(fine.paid == 0) {
+          p = "No"
+        } else {
+          p = "Yes"
+        }
+
+        console.log(prev_id)
+        elem_mid = "<h3>" + fine.Card_id + "</h3><h5>Total Fines: " + (fine_amt/100).toFixed(2) + `</h5><ul class="list-group mt-2">`
+        if (prev_id != -1){
+          console.log("ADD")
+          fines_list.innerHTML += base_elem_start + elem_mid + fine_group + base_elem_end;
+        }
+        fine_amt = fine.fine_amt
+        fine_group = `
+          <li class="card m-2 box-shadow dummy d-flex flex-md-row align-items-center">
+            <div class="card-body d-flex flex-column align-items-start">
+              <p class="card-test mb-auto">ISBN: ` + fine.Isbn + `, Due: ` +  fine.Due_date + `</p>
+              <p class="card-test mb-auto">Fine Amount: ` +  (fine.fine_amt/100).toFixed(2) + ", Paid: <b>" + p + `<b></p>
+            </div>
+            <div class="col-2 align-self-center m-4 mt-0 mb-2">
+              <button onclick="bookCheckin('` + fine.Loan_id + `')" class="btn btn-primary p-2 checkin-book-btn" type="button">Check-in Book</button>
+            </div>
+          </li>`
+        prev_id = fine.Card_id
+      }
+    }
+    fine = data[data.length-1].paid
+    if(fine.paid == 0) {
+      p = "No"
+    } else {
+      p = "Yes"
+    }
+    elem_mid = "<h3>" + fine.Card_id + "</h3><h5>Total Fines: " + (fine_amt/100).toFixed(2) + `</h5><ul class="list-group mt-2">`
+    if (prev_id != -1){
+      console.log("ADD")
+      fines_list.innerHTML += base_elem_start + elem_mid + fine_group + base_elem_end;
+    }
+  }).catch(err => {
+    // Do something for an error here
+  });
+
+}
+
+function updateFines(){
+  var query ="fines/update"
+  fetch(query, {
+    method: "PUT"
+  }).then(response => {
+    return response.json()
+  }).then(res => {
+    getFines();
+  }).catch(err => {
+    // Do something for an error here
+  });
+
+}
+
 window.addEventListener("load", () => {
     // var button = document.getElementById("res-btn");
     // button.addEventListener("click", getQuotes);
@@ -317,4 +425,9 @@ window.addEventListener("load", () => {
 
     var book_checkin_btn = document.getElementById("book-checkin-btn");
     book_checkin_btn.addEventListener("click", bookCheckinSearch);
+
+    var book_checkin_btn = document.getElementById("update-fines-btn");
+    book_checkin_btn.addEventListener("click", updateFines);
+
+    getFines()
 })
