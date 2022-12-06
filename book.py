@@ -14,6 +14,25 @@ class Search(Resource):
             conn.row_factory = sql.Row
             c = conn.cursor()
 
+            # sql_query = '''
+            # WITH q_authors AS (
+            #     SELECT GROUP_CONCAT(Name,', ') AS Author_names, Isbn
+            #     FROM AUTHORS NATURAL JOIN BOOK_AUTHORS
+            #     GROUP BY Isbn
+            # )
+            # SELECT Isbn, Title, Author_names, Cover_url
+            # FROM BOOK NATURAL JOIN q_authors
+            # WHERE INSTR(LOWER(Title), :q) > 0
+            # OR INSTR(LOWER(Author_names), :q) > 0
+            # OR INSTR(LOWER(Isbn), :q) > 0
+            # ORDER BY INSTR(LOWER(Isbn), :q), INSTR(LOWER(Author_names), :q), INSTR(LOWER(Title), :q)
+            # LIMIT :s OFFSET (:p-1)*:s
+            # ;
+            # '''
+
+            # return [dict(x) for x in c.execute(sql_query, args).fetchmany(size=SEARCH_PAGE_SIZE)]
+
+
             sql_query = '''
             WITH q_authors AS (
                 SELECT GROUP_CONCAT(Name,', ') AS Author_names, Isbn
@@ -30,7 +49,23 @@ class Search(Resource):
             ;
             '''
 
-            return [dict(x) for x in c.execute(sql_query, args).fetchmany(size=SEARCH_PAGE_SIZE)]
+            available_query = '''
+            SELECT COUNT(*) AS count
+            FROM BOOK NATURAL JOIN BOOK_LOANS
+            WHERE BOOK.Isbn == :Isbn AND Date_in IS NULL;
+            '''
+
+            res = [dict(x) for x in c.execute(sql_query, args).fetchmany(size=SEARCH_PAGE_SIZE)]
+
+            for book in res:
+                if c.execute(available_query, book).fetchone()["count"] >= 1:
+                    book["available"] = "No"
+                else:
+                    book["available"] = "Yes"
+
+            return res
+
+
 
 class Checkout(Resource):
 
