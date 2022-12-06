@@ -190,7 +190,7 @@ function bookCheckinSearch(){
             <div class="card-body d-flex flex-column align-items-start">
               <h3>` + data[i].Isbn + `</h3>
               <p class="card-test mb-auto">Checked out by: ` + data[i].Bname.replace("'", "\\'") + `</p>
-              <p class="card-test mb-auto">Card ID: ID` +  ("00000" + data[i].card_id).slice(-6) + `</p>
+              <p class="card-test mb-auto">Card ID: ID` +  ("00000" + data[i].Card_id).slice(-6) + `</p>
               <div class="mb-1 text-muted" id="book-due-` + i + `">Checked out: ` + data[i].Date_out + `, Due: ` + data[i].Due_date + `</div>
             </div>
             <div class="col-2 align-self-center m-4 mt-0 mb-2">
