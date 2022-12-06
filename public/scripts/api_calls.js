@@ -321,41 +321,45 @@ function getFines(){
     
     var base_elem_end = "</ul></li>";  
 
-    for (fine in data){
+    console.log("Data: ")
+    console.log(data)
+
+    for (var i = 0; i < data.length; i++){
+      var fine = data[i]
       if (fine.Card_id == prev_id){
         console.log("HI")
         fine_group += `
           <li class="card m-2 box-shadow dummy d-flex flex-md-row align-items-center">
             <div class="card-body d-flex flex-column align-items-start">
               <p class="card-test mb-auto">ISBN: ` + fine.Isbn + `, Due: ` +  fine.Due_date + `</p>
-              <p class="card-test mb-auto">Fine Amount: ` +  (fine.fine_amt/100).toFixed(2) + ", Paid: <b>" + p + `<b></p>
+              <p class="card-test mb-auto">Fine Amount: ` +  (fine.Fine_amt/100).toFixed(2) + ", Paid: <b>" + p + `</b></p>
             </div>
             <div class="col-2 align-self-center m-4 mt-0 mb-2">
               <button onclick="bookCheckin('` + fine.Loan_id + `')" class="btn btn-primary p-2 checkin-book-btn" type="button">Check-in Book</button>
             </div>
           </li>`
-        fine_amt += fine.fine_amt
+        fine_amt += fine.Fine_amt
       } else {
         console.log("DUP")
         var p = -1;
-        if(fine.paid == 0) {
+        if(fine.Paid == 0) {
           p = "No"
         } else {
           p = "Yes"
         }
 
         console.log(prev_id)
-        elem_mid = "<h3>" + fine.Card_id + "</h3><h5>Total Fines: " + (fine_amt/100).toFixed(2) + `</h5><ul class="list-group mt-2">`
+        elem_mid = "<h3>Card ID: ID" + ("00000" + data[i].Card_id).slice(-6) + "</h3><h5>Total Fine: " + (fine_amt/100).toFixed(2) + `</h5><ul class="list-group col-12">`
         if (prev_id != -1){
           console.log("ADD")
           fines_list.innerHTML += base_elem_start + elem_mid + fine_group + base_elem_end;
         }
-        fine_amt = fine.fine_amt
+        fine_amt = fine.Fine_amt
         fine_group = `
           <li class="card m-2 box-shadow dummy d-flex flex-md-row align-items-center">
             <div class="card-body d-flex flex-column align-items-start">
               <p class="card-test mb-auto">ISBN: ` + fine.Isbn + `, Due: ` +  fine.Due_date + `</p>
-              <p class="card-test mb-auto">Fine Amount: ` +  (fine.fine_amt/100).toFixed(2) + ", Paid: <b>" + p + `<b></p>
+              <p class="card-test mb-auto">Fine Amount: ` +  (fine.Fine_amt/100).toFixed(2) + ", Paid: <b>" + p + `</b></p>
             </div>
             <div class="col-2 align-self-center m-4 mt-0 mb-2">
               <button onclick="bookCheckin('` + fine.Loan_id + `')" class="btn btn-primary p-2 checkin-book-btn" type="button">Check-in Book</button>
@@ -364,17 +368,17 @@ function getFines(){
         prev_id = fine.Card_id
       }
     }
-    fine = data[data.length-1].paid
-    if(fine.paid == 0) {
-      p = "No"
-    } else {
-      p = "Yes"
-    }
-    elem_mid = "<h3>" + fine.Card_id + "</h3><h5>Total Fines: " + (fine_amt/100).toFixed(2) + `</h5><ul class="list-group mt-2">`
-    if (prev_id != -1){
-      console.log("ADD")
-      fines_list.innerHTML += base_elem_start + elem_mid + fine_group + base_elem_end;
-    }
+    // fine = data[data.length-1]
+    // if(fine.Paid == 0) {
+    //   p = "No"
+    // } else {
+    //   p = "Yes"
+    // }
+    // elem_mid = "<h3>" + fine.Card_id + "</h3><h5>Total Fine: " + (Fine_amt/100).toFixed(2) + `</h5><ul class="list-group mt-2">`
+    // if (prev_id != -1){
+    //   console.log("ADD")
+    //   fines_list.innerHTML += base_elem_start + elem_mid + fine_group + base_elem_end;
+    // }
   }).catch(err => {
     // Do something for an error here
   });
