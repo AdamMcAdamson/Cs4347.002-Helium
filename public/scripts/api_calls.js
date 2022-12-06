@@ -127,7 +127,7 @@ function bookCheckoutForm(event){
       alert_elem.removeChild(alert_elem.lastChild);
     }
     
-    if (res.status != 200) { // Not Successful Checkout
+    if (res.status !== 200) { // Not Successful Checkout
       alert_elem.innerHTML += `
       <div class="alert alert-warning d-flex align-items-center alert-dismissible fade show" role="alert">
         <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
@@ -225,9 +225,9 @@ function bookCheckin(loan_id){
     return response.json().then(data => ({status: response.status, message: data.message, data: data}));
   }).then(res => {
     
-    if (res.status != 400) { // Not Successful Checkout
+    if (res.status !== 400) { // Good Request
       alert(res.message)
-    } else {  // Successful Checkout
+    } else {  // Bad Request
       console.log(res.message)
     }
 
@@ -260,7 +260,7 @@ function createBorrower(){
       alert_elem.removeChild(alert_elem.lastChild);
     }
     
-    if (res.status != 200) { // Not Successful Creation
+    if (res.status !== 200) { // Not Successful Creation
       alert_elem.innerHTML += `
       <div class="alert alert-warning d-flex align-items-center alert-dismissible fade show" role="alert">
         <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
@@ -288,13 +288,14 @@ function createBorrower(){
 }
 
 function getFines(){
-  
+
   var fines_list = document.getElementById('fines-res');
-  var paid = false
+  
+  var paid = document.getElementById("get-fines-paid-checkbox").checked
 
   var base_query = "fines/all"
   var query;
-  if (!paid){
+  if (paid){
     query = base_query
   } else {
     query = base_query + "?paid=FALSE"
@@ -306,7 +307,7 @@ function getFines(){
 
     var data = res
 
-    console.log(data)
+    //console.log(data)
 
     while (fines_list.lastChild) {
       fines_list.removeChild(fines_list.lastChild);
@@ -321,75 +322,126 @@ function getFines(){
     
     var base_elem_end = "</ul></li>";  
 
-    console.log("Data: ")
-    console.log(data)
+    var p = -1;
+    var r = -1;
+
+    // console.log("Data: ")
+    // console.log(data)
 
     for (var i = 0; i < data.length; i++){
       var fine = data[i]
-      if (fine.Card_id == prev_id){
-        console.log("HI")
+      if (fine.Card_id === prev_id){
+        if(fine.Paid === 0) {
+          p = "No"
+        } else {
+          p = "Yes"
+        }
+        if(fine.Date_in === null) {
+          r = "No"
+        } else {
+          r = "Yes"
+        }
         fine_group += `
           <li class="card m-2 box-shadow dummy d-flex flex-md-row align-items-center">
             <div class="card-body d-flex flex-column align-items-start">
-              <p class="card-test mb-auto">ISBN: ` + fine.Isbn + `, Due: ` +  fine.Due_date + `</p>
+              <p class="card-test mb-auto">ISBN: ` + fine.Isbn + `, Due: ` +  fine.Due_date + `, Returned: ` + r +  ` </p>
               <p class="card-test mb-auto">Fine Amount: ` +  (fine.Fine_amt/100).toFixed(2) + ", Paid: <b>" + p + `</b></p>
-            </div>
+            </div>`
+        if(fine.Paid === 0){
+          if(fine.Date_in === null){
+            fine_group += `
             <div class="col-2 align-self-center m-4 mt-0 mb-2">
-              <button onclick="payFine('` + fine.Loan_id + `', '` + (fine.Paid == 1) + `)" class="btn btn-primary p-2 pay-fine-btn" type="button">Pay Fine</button>
-            </div>
-          </li>`
+            <button onclick="payFine(` + fine.Loan_id + `)" class="btn btn-primary p-2 pay-fine-btn" type="button" disabled>Pay Fine</button>
+            </div>`
+          } else {
+            fine_group += `
+              <div class="col-2 align-self-center m-4 mt-0 mb-2">
+              <button onclick="payFine(` + fine.Loan_id + `)" class="btn btn-primary p-2 pay-fine-btn" type="button">Pay Fine</button>
+              </div>`
+          }
+        }
+          fine_group += `</li>`
         fine_amt += fine.Fine_amt
       } else {
-        //console.log("DUP")
-        var p = -1;
-        if(fine.Paid == 0) {
+        if(fine.Paid === 0) {
           p = "No"
         } else {
           p = "Yes"
         }
 
-        console.log(prev_id)
+        if(fine.Date_in === null) {
+          r = "No"
+        } else {
+          r = "Yes"
+        }
+
         elem_mid = "<h3>Card ID: ID" + ("00000" + prev_id).slice(-6) + "</h3><h5>Total Fine: " + (fine_amt/100).toFixed(2) + `</h5><ul class="list-group col-12">`
-        if (prev_id != -1){
-          //console.log("ADD")
+        
+        if (prev_id !== -1){
           fines_list.innerHTML += base_elem_start + elem_mid + fine_group + base_elem_end;
         }
+        
         fine_amt = fine.Fine_amt
         fine_group = `
           <li class="card m-2 box-shadow dummy d-flex flex-md-row align-items-center">
             <div class="card-body d-flex flex-column align-items-start">
-              <p class="card-test mb-auto">ISBN: ` + fine.Isbn + `, Due: ` +  fine.Due_date + `</p>
+              <p class="card-test mb-auto">ISBN: ` + fine.Isbn + `, Due: ` +  fine.Due_date + `, Returned: ` + r +  ` </p>
               <p class="card-test mb-auto">Fine Amount: $` +  (fine.Fine_amt/100).toFixed(2) + ", Paid: <b>" + p + `</b></p>
             </div>`
-        if(fine.Paid == 0){
-          fine_group += `
-            <div class="col-2 align-self-center m-4 mt-0 mb-2">
-              <button onclick="payFine('` + fine.Loan_id + `', '` + (fine.Paid == 1) + `)" class="btn btn-primary p-2 pay-fine-btn" type="button">Pay Fine</button>
-            </div>`
+        if(fine.Paid === 0){
+          if(fine.Date_in === null){
+              fine_group += `
+              <div class="col-2 align-self-center m-4 mt-0 mb-2">
+              <button onclick="payFine(` + fine.Loan_id + `)" class="btn btn-primary p-2 pay-fine-btn" type="button" disabled>Pay Fine</button>
+              </div>`
+          } else {
+            fine_group += `
+              <div class="col-2 align-self-center m-4 mt-0 mb-2">
+              <button onclick="payFine(` + fine.Loan_id + `)" class="btn btn-primary p-2 pay-fine-btn" type="button">Pay Fine</button>
+              </div>`
+          }
         }
         fine_group += `</li>`
         prev_id = fine.Card_id
       }
     }
+
     fine = data[data.length-1]
-    console.log(fine)
-    if(fine.Paid == 0) {
+    if(fine.Paid === 0) {
       p = "No"
     } else {
       p = "Yes"
     }
     elem_mid = "<h3>Card ID: ID" + ("00000" + fine.Card_id).slice(-6) + "</h3><h5>Total Fine: " + (fine_amt/100).toFixed(2) + `</h5><ul class="list-group col-12">`
-    console.log("HEYO")
-    console.log(prev_id)
     
-    if (prev_id != -1){
-      console.log("ADD")
+    if (prev_id !== -1){
       fines_list.innerHTML += base_elem_start + elem_mid + fine_group + base_elem_end;
     }
   }).catch(err => {
     // Do something for an error here
   });
 
+}
+
+function payFine(loan_id){
+  var query ="fines/payment?loan_id=" + loan_id 
+  fetch(query, {
+    method: "PUT"
+  }).then(response => {
+    return response.json().then(data => ({status: response.status, message: data.message, data: data}));
+  }).then(res => {
+    
+    if (res.status !== 400) { // Good Request
+      alert(res.message)
+    } else {  // Bad Request
+      console.log(res.message)
+    }
+
+    getFines()
+
+  }).catch(err => {
+    // Do something for an error here
+  });
 }
 
 function updateFines(){
