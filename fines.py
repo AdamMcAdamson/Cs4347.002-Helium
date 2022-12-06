@@ -11,24 +11,37 @@ class FinesPayment(Resource):
         args = {'loan_id':request.args.get('loan_id', '')}
 
         # @TODO: Fix
-        # with sql.connect(DB_FILE) as conn:
-        #     conn.row_factory = sql.Row
-        #     c = conn.cursor()
+        with sql.connect(DB_FILE) as conn:
+            conn.row_factory = sql.Row
+            c = conn.cursor()
 
-        #     sql_query = '''
-        #     UPDATE (FINES NATURAL JOIN BOOK_LOANS)
-        #     SET Paid = 1
-        #     WHERE Date_in IS NOT NULL AND Loan_id == :loan_id
-        #     RETURNING *;
-        #     '''
+            verify_returned_query = '''
+            SELECT COUNT(*) AS count
+            FROM BOOK_LOANS
+            WHERE Loan_id = :loan_id AND Date_in IS NOT NULL
+            '''
+            
+            if dict(c.execute(verify_returned_query, args).fetchone())['count'] != 1:
+                return {"message" : "Cannot pay fine. The book has not been returned."}, 409
+            
+            check_fine_query = '''
+            SELECT COUNT(*) AS count
+            FROM FINES
+            WHERE Loan_id == :loan_id AND Paid == 0
+            '''
 
-        #     ret = c.execute(sql_query).fetchone()
-        #     if ret != flask:
-        #         return "Successfully paid fine for loan {loan_id}".format(args), 200
-        #     else:
-        #         return "Could not pay fine for loan {loan_id}, make sure the book has been returned".format(args), 409
+            if dict(c.execute(check_fine_query, args).fetchone())['count'] != 1:
+                return {"message" : "Cannot pay fine. The request fine has either already been paid, or does not exist."}, 409
 
-        return {},200
+            pay_fine_query = '''
+            UPDATE FINES
+            SET Paid = 1
+            WHERE Loan_id == :loan_id
+            '''
+
+            c.execute(pay_fine_query, args)
+
+            return {"message": "Paid fine successfully."} , 200
 
 class FinesAll(Resource):
 
