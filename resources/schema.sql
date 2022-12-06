@@ -59,7 +59,9 @@ INSERT INTO BOOK_LOANS (Isbn, Card_id, Date_out, Due_date)
 	VALUES
 		('0195153448', 1, DATE(CURRENT_DATE, '-20 days'), DATE(CURRENT_DATE, '-6 days')),
 		('0002005018', 1, DATE(CURRENT_DATE, '-22 days'), DATE(CURRENT_DATE, '-8 days')),
-		('0374157065', 2, DATE(CURRENT_DATE, '-15 days'), DATE(CURRENT_DATE, '-1 days'));
+		('0374157065', 2, DATE(CURRENT_DATE, '-15 days'), DATE(CURRENT_DATE, '-1 days')),
+		('0399135782', 3, DATE(CURRENT_DATE, '-18 days'), DATE(CURRENT_DATE, '-4 days')),
+		('0425176428', 3, DATE(CURRENT_DATE, '-15 days'), DATE(CURRENT_DATE, '-1 days'));
 
 INSERT INTO BOOK (Isbn, Title, Cover_url)
 	VALUES
