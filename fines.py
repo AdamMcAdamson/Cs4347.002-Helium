@@ -18,7 +18,7 @@ class FinesPayment(Resource):
             verify_returned_query = '''
             SELECT COUNT(*) AS count
             FROM BOOK_LOANS
-            WHERE Loan_id = :loan_id AND Date_in IS NOT NULL
+            WHERE Loan_id = :loan_id AND Date_in IS NOT NULL;
             '''
             
             if dict(c.execute(verify_returned_query, args).fetchone())['count'] != 1:
@@ -27,7 +27,7 @@ class FinesPayment(Resource):
             check_fine_query = '''
             SELECT COUNT(*) AS count
             FROM FINES
-            WHERE Loan_id == :loan_id AND Paid == 0
+            WHERE Loan_id == :loan_id AND Paid == 0;
             '''
 
             if dict(c.execute(check_fine_query, args).fetchone())['count'] != 1:
@@ -36,7 +36,7 @@ class FinesPayment(Resource):
             pay_fine_query = '''
             UPDATE FINES
             SET Paid = 1
-            WHERE Loan_id == :loan_id
+            WHERE Loan_id == :loan_id;
             '''
 
             c.execute(pay_fine_query, args)

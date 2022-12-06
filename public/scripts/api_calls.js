@@ -66,9 +66,10 @@ function bookSearch(){
               <h3>` + data[i].Title + `</h3>
               <p class="card-test mb-auto" id="book-authors-` + i + `">By: ` + data[i].Author_names + `</p>
               <div class="mb-1 text-muted" id="book-isbn-` + i + `">Isbn: ` + data[i].Isbn + `</div>
+              <p class="card-test mb-auto" id="book-availablity-` + i + `">Available: ` + data[i].available + `</p>
             </div>
             <div class="col-2 align-self-center m-4 mt-0 mb-2">
-              <button onclick="bookCheckoutModal('` + data[i].Isbn + `', '` + data[i].Title.replace("'", "\\'") + `')" class="btn btn-primary p-2 checkout-book-btn" type="button" data-bs-toggle="modal" data-bs-target="#checkout-book-modal" id="book-checkout-btn-` + i + `" bookid="book-` + i + `" isbn="` + data[i].Isbn + `">Checkout Book</button>
+              <button onclick="bookCheckoutModal('` + data[i].Isbn + `', '` + data[i].Title.replace("'", "\\'") + `')" class="btn btn-primary p-2 checkout-book-btn" type="button" data-bs-toggle="modal" data-bs-target="#checkout-book-modal" id="book-checkout-btn-` + i + `" bookid="book-` + i + `" isbn="` + data[i].Isbn + `"` + (data[i].available === "Yes" ? `>`: `disabled>`) + `Checkout Book</button>` + `
             </div>
         </li>`
       }
