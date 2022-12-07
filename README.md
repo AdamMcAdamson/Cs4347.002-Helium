@@ -7,4 +7,6 @@ Once you have installed Python, you can get the requirements by opening a comman
 
 ## Running and Operating
 Run `start.bat` to start the server.
-Then, copy and paste the URL it gives you into your browser (The URL is most likely http://127.0.0.1:5000)
+Then, copy and paste the URL it gives you into your browser (Likely http://localhost:5000)
+You can also reset the database to it's initial state on server startup by opening a command prompt in the project folder and running `python main.py db-reset` instead of running `start.bat`.
+
