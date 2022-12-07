@@ -6,6 +6,7 @@ import sys
 from consts import DB_FILE
 from book import Search, Checkout, Checkin
 from fines import FinesAll, FinesUpdate, FinesPayment
+from borrower import BorrowerCreate
 
 app = Flask(__name__) 
 api = Api(app)
@@ -24,27 +25,6 @@ def style(path):
 def scripts(path): 
     return send_from_directory('./public/scripts', path)
 
-# @TODO: Move to Own File
-@app.route('/borrower/create', methods=['POST'])
-def create_borrower():
-    
-    args = {'ssn':request.args.get('ssn', ''), 'bname':request.args.get('bname', ''), 'address':request.args.get('address', ''), 'phone':request.args.get('phone', 'NULL')}
-
-    with sql.connect(DB_FILE) as conn:
-        conn.row_factory = sql.Row
-        c = conn.cursor()
-        
-        # Check for existing SSN and return useful error if it already exists
-        if c.execute("SELECT * FROM BORROWER WHERE Ssn = :ssn", args).fetchone():
-            return {"message": "Only one borrower card per person. Ssn must be unique."}, 409
-        
-        # Create borrower
-        command = "INSERT INTO BORROWER (Ssn, Bname, Address, Phone) VALUES (:ssn, :bname, :address, :phone);"
-        c.execute(command, args)
-
-        card_id = c.execute("SELECT Card_id FROM BORROWER WHERE Ssn = :ssn", args).fetchone()["Card_id"]
-        return {"message": "Borrower Successfully Created. Card ID: " + 'ID{:0>6}'.format(str(card_id)) + ".", "card_id_str": 'ID{:0>6}'.format(str(card_id)), "card_id_num": card_id}, 200
-        
 
 # Endpoints
 api.add_resource(Search, '/book/search', endpoint='search')
@@ -58,6 +38,8 @@ api.add_resource(FinesAll, '/fines/all', endpoint='fines_all')
 api.add_resource(FinesUpdate, '/fines/update', endpoint='fines_update')
 
 api.add_resource(FinesPayment, '/fines/payment', endpoint='fines_payment')
+
+api.add_resource(BorrowerCreate, '/borrower/create', endpoint='borrower_create')
 
 if __name__ == '__main__':
 
