@@ -146,7 +146,3 @@ class Checkin(Resource):
             c.execute(sql_query, args)
             
             return {"message": "Book successfully checked in."}, 200
-
-
-
-

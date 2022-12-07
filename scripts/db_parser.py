@@ -152,4 +152,3 @@ CREATE TABLE FINES (
     for borrower in borrowers[:-1]:
         file.write("\n\t\t('"+ borrower[0] + "', '" + borrower[1] + "', '" + borrower[2]+ "', '" + borrower[3] + "'),")
     file.write("\n\t\t('"+ borrowers[-1][0] + "', '" + borrowers[-1][1] + "', '" + borrowers[-1][2]+ "', '" + borrowers[-1][3] + "');\n")
-        
